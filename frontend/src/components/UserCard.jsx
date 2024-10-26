@@ -3,11 +3,11 @@ import { BiTrash } from "react-icons/bi";
 import EditModal from "./EditModal";
 import { BASE_URL } from "../App";
 
-const UserCard = ({ user, setUsers }) => {
+const UserCard = ({ user, setUsers , room_id }) => {
 	const toast = useToast();
 	const handleDeleteUser = async () => {
 		try {
-			const res = await fetch(BASE_URL + "/friends/" + user.id, {
+			const res = await fetch(`${BASE_URL}/api/rooms/${room_id}/friends/delete/${user.id}`, {
 				method: "DELETE",
 			});
 			const data = await res.json();
@@ -47,7 +47,8 @@ const UserCard = ({ user, setUsers }) => {
 					</Flex>
 
 					<Flex>
-						<EditModal user={user} setUsers={setUsers} />
+						<EditModal setUsers={setUsers} user={user} room_id={room_id} />
+
 						<IconButton
 							variant='ghost'
 							colorScheme='red'

@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="Z:\FALL2024\friendstore\venv"
+VIRTUAL_ENV="Z:\FALL2024\frienddeck\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

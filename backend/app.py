@@ -1,35 +1,42 @@
-# TODO: UPDATE THIS FILE FOR DEPLOYMENT
 from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
 import os
 
+# Initialize Flask app
 app = Flask(__name__)
 
-# We can comment this CORS config for the production because we are running the frontend and backend on the same server
-# CORS(app) 
-
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///friends.db"
+# Database configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///friends.db'  # Example for SQLite
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# Initialize database
 db = SQLAlchemy(app)
 
-frontend_folder = os.path.join(os.getcwd(),"..","frontend")
-dist_folder = os.path.join(frontend_folder,"dist")
 
-# Server static files from the "dist" folder under the "frontend" directory
-@app.route("/",defaults={"filename":""})
-@app.route("/<path:filename>")
-def index(filename):
-  if not filename:
-    filename = "index.html"
-  return send_from_directory(dist_folder,filename)
 
-# api routes
+# Set up folder paths for serving static frontend files
+frontend_folder = os.path.join(os.getcwd(), "..", "frontend")
+dist_folder = os.path.join(frontend_folder, "dist")
+
+# Ensure routes are imported after initializing app and db
 import routes
 
-with app.app_context():
-  db.create_all()
+#Serve static files from the frontend/dist folder under frontend
+ 
 
+# Route to serve static files (frontend)
+@app.route("/", defaults={"filename": ""})
+@app.route("/<path:filename>")
+def index(filename):
+    if not filename:
+        filename = "index.html"
+    return send_from_directory(dist_folder, filename)
+
+# Main application entry point
 if __name__ == "__main__":
-  app.run(debug=True)
+    # Print the routes for debugging purposes
+    print(app.url_map)
+    print("Running app on http://127.0.0.1:5000")
+    
+    # Run the Flask app with debug mode on
+    app.run(debug=True)

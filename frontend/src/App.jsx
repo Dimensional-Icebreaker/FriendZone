@@ -1,37 +1,56 @@
-import { Container, Stack, Text } from "@chakra-ui/react";
-import Navbar from "./components/Navbar";
-import UserGrid from "./components/UserGrid";
-import { useState } from "react";
+// App.jsx
+import React, { useState, useEffect } from 'react';
+import RoomPage from './components/RoomPage';  
+import Zone from './components/Zone';  // Import Zone instead of ZoneDeck
 
-// updated this after recording. Make sure you do the same so that it can work in production
-export const BASE_URL = import.meta.env.MODE === "development" ? "http://127.0.0.1:5000/api" : "/api";
+// Ensure this is exported
+export const BASE_URL = "http://127.0.0.1:5000";  // Adjust as per your backend URL
 
-function App() {
-	const [users, setUsers] = useState([]);
+const App = () => {
+    const [currentRoomId, setCurrentRoomId] = useState(null);
+    const [rooms, setRooms] = useState([]);
 
-	return (
-		<Stack minH={"100vh"}>
-			<Navbar setUsers={setUsers} />
+    useEffect(() => {
+        fetch(`${BASE_URL}/api/rooms`)
+            .then(response => response.json())
+            .then(data => setRooms(data))
+            .catch(error => console.error("Error fetching rooms:", error));
+    }, []);
 
-			<Container maxW={"1200px"} my={4}>
-				<Text
-					fontSize={{ base: "3xl", md: "50" }}
-					fontWeight={"bold"}
-					letterSpacing={"2px"}
-					textTransform={"uppercase"}
-					textAlign={"center"}
-					mb={8}
-				>
-					<Text as={"span"} bgGradient={"linear(to-r, cyan.400, blue.500)"} bgClip={"text"}>
-						ZONE DECK
-					</Text>
-					🚀
-				</Text>
+    const handleRoomSelect = (roomId) => {
+        console.log("Selected Room ID:", roomId);  // Debugging statement to check roomId
+        setCurrentRoomId(roomId);
+    };
 
-				<UserGrid users={users} setUsers={setUsers} />
-			</Container>
-		</Stack>
-	);
-}
+    const handleAddRoom = (newRoom) => {
+        fetch(`${BASE_URL}/api/rooms`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newRoom)
+        })
+        .then(response => response.json())
+        .then(room => setRooms([...rooms, room]))
+        .catch(error => console.error("Error adding room:", error));
+    };
+
+    return (
+        <div>
+            {!currentRoomId ? (
+                <RoomPage 
+                    rooms={rooms} 
+                    onRoomSelect={handleRoomSelect} 
+                    onAddRoom={handleAddRoom}  
+                />
+            ) : (
+                <>
+                    <p>Current Room ID: {currentRoomId}</p>  {/* Debugging output */}
+                    <Zone room_id={currentRoomId} />  {/* Verify that currentRoomId is passed correctly */}
+                </>
+            )}
+        </div>
+    );
+};
 
 export default App;
