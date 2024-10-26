@@ -4,7 +4,7 @@ import RoomPage from './components/RoomPage';
 import Zone from './components/Zone';  // Import Zone instead of ZoneDeck
 
 // Ensure this is exported
-export const BASE_URL = "http://127.0.0.1:5000";  // Adjust as per your backend URL
+export const BASE_URL = "https://zonedeck.onrender.com";  // Adjust as per your backend URL "http://127.0.0.1:5000"
 
 const App = () => {
     const [currentRoomId, setCurrentRoomId] = useState(null);

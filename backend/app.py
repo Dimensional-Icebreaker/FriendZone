@@ -1,9 +1,11 @@
 from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import os
 
 # Initialize Flask app
 app = Flask(__name__)
+CORS(app)  # Enable CORS for cross-origin requests
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///friends.db'  # Example for SQLite
@@ -12,19 +14,18 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Initialize database
 db = SQLAlchemy(app)
 
-
+# Create tables if they don't exist
+with app.app_context():
+    db.create_all()
 
 # Set up folder paths for serving static frontend files
 frontend_folder = os.path.join(os.getcwd(), "..", "frontend")
 dist_folder = os.path.join(frontend_folder, "dist")
 
-# Ensure routes are imported after initializing app and db
+# Import routes after initializing app and db
 import routes
 
-#Serve static files from the frontend/dist folder under frontend
- 
-
-# Route to serve static files (frontend)
+# Serve static files from the frontend/dist folder
 @app.route("/", defaults={"filename": ""})
 @app.route("/<path:filename>")
 def index(filename):
@@ -34,9 +35,9 @@ def index(filename):
 
 # Main application entry point
 if __name__ == "__main__":
-    # Print the routes for debugging purposes
+    # Print routes for debugging
     print(app.url_map)
     print("Running app on http://127.0.0.1:5000")
-    
-    # Run the Flask app with debug mode on
+
+    # Run Flask app in debug mode (for development)
     app.run(debug=True)
