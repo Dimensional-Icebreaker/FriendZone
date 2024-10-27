@@ -45,7 +45,6 @@ const App = () => {
                 />
             ) : (
                 <>
-                    <p>Current Room ID: {currentRoomId}</p>  {/* Debugging output */}
                     <Zone room_id={currentRoomId} />  {/* Verify that currentRoomId is passed correctly */}
                 </>
             )}
