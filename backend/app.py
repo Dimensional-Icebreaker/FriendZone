@@ -8,7 +8,10 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for cross-origin requests
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///friends.db'  # Example for SQLite
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///friends.db'  # Use to chnage it for SQLite once db expires
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')  # Use environment variable for PostgreSQL connection string
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize database
