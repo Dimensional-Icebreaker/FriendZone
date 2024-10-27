@@ -15,13 +15,12 @@ import {
   ModalCloseButton,
   ModalFooter,
   Container,
-  Grid,
   IconButton,
-  Tooltip, // Add Tooltip for better UX
+  Tooltip,
+  Divider,
 } from "@chakra-ui/react";
 import Navbar_Roompage from './Navbar_Roompage';
 import { BiTrash } from "react-icons/bi";
-
 
 const RoomPage = ({ onRoomSelect }) => {
   const [rooms, setRooms] = useState([]);
@@ -36,7 +35,7 @@ const RoomPage = ({ onRoomSelect }) => {
   } = useDisclosure();
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [passwordInput, setPasswordInput] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // State for error message
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Modal to confirm password for deletion
   const {
@@ -71,9 +70,9 @@ const RoomPage = ({ onRoomSelect }) => {
 
   // Handle room selection (with password check)
   const handleRoomSelect = (room) => {
-    setSelectedRoom(room); // Set the selected room
-    setErrorMessage(''); // Reset error message
-    onPasswordOpen(); // Open password modal
+    setSelectedRoom(room);
+    setErrorMessage('');
+    onPasswordOpen();
   };
 
   const handlePasswordSubmit = async () => {
@@ -89,11 +88,10 @@ const RoomPage = ({ onRoomSelect }) => {
       const result = await response.json();
 
       if (response.ok) {
-        // Password verified, proceed to enter the room
-        onRoomSelect(selectedRoom.id); // Call the function to access the room
-        onPasswordClose(); // Close the password modal
+        onRoomSelect(selectedRoom.id);
+        onPasswordClose();
       } else {
-        setErrorMessage(result.error || "Incorrect password!"); // Show error if password is incorrect
+        setErrorMessage(result.error || "Incorrect password!");
       }
     } catch (error) {
       setErrorMessage('Error verifying password. Please try again.');
@@ -104,7 +102,7 @@ const RoomPage = ({ onRoomSelect }) => {
   // Handle delete room with password verification
   const handleDeleteRoom = async (room) => {
     setSelectedRoom(room);
-    onDeleteModalOpen(); // Open modal to verify password for deletion
+    onDeleteModalOpen();
   };
 
   const handleDeleteSubmit = async () => {
@@ -120,16 +118,13 @@ const RoomPage = ({ onRoomSelect }) => {
       const result = await response.json();
 
       if (response.ok) {
-        // Password verified, proceed to delete room
         await fetch(`/api/rooms/${selectedRoom.id}/delete`, {
           method: 'DELETE',
         });
-
-        // Update the room list after deletion
         setRooms(rooms.filter((room) => room.id !== selectedRoom.id));
-        onDeleteModalClose(); // Close delete modal
+        onDeleteModalClose();
       } else {
-        setErrorMessage(result.error || "Incorrect password!"); // Show error if password is incorrect
+        setErrorMessage(result.error || "Incorrect password!");
       }
     } catch (error) {
       setErrorMessage('Error verifying password. Please try again.');
@@ -137,34 +132,10 @@ const RoomPage = ({ onRoomSelect }) => {
     }
   };
 
-  // Split rooms into four arrays for the four containers
-  const splitRooms = () => {
-    const container1 = [];
-    const container2 = [];
-    const container3 = [];
-    const container4 = [];
-
-    rooms.forEach((room, index) => {
-      if (index % 4 === 0) {
-        container1.push(room);
-      } else if (index % 4 === 1) {
-        container2.push(room);
-      } else if (index % 4 === 2) {
-        container3.push(room);
-      } else {
-        container4.push(room);
-      }
-    });
-
-    return { container1, container2, container3, container4 };
-  };
-
-  const { container1, container2, container3, container4 } = splitRooms();
-
   return (
     <>
       <Navbar_Roompage setRooms={setRooms} />
-      <Container maxW={"1200px"} my={4}>
+      <Container maxW="md" my={4} centerContent>
         <Text
           fontSize={{ base: "3xl", md: "50" }}
           fontWeight={"bold"}
@@ -177,15 +148,12 @@ const RoomPage = ({ onRoomSelect }) => {
             ROOMS
           </Text>
         </Text>
-      </Container>
 
-      <VStack align="center" justify="center" p="6">
-        <Grid templateColumns="repeat(4, 1fr)" gap={6}>
-          {/* Container 1 */}
-          <VStack borderRight="2px solid gray" p="4">
-            {container1.length ? (
-              container1.map((room) => (
-                <Box key={room.id} display="flex" justifyContent="space-between" alignItems="center" w="full">
+        <VStack align="center" w="full" spacing={4}>
+          {rooms.length ? (
+            rooms.map((room) => (
+              <VStack key={room.id} w="full" maxW="md" spacing={3}>
+                <Box display="flex" justifyContent="space-between" alignItems="center" w="full">
                   <Button onClick={() => handleRoomSelect(room)}>{room.name}</Button>
                   <Tooltip label="Delete Room" aria-label="Delete Room Tooltip">
                     <IconButton
@@ -195,153 +163,79 @@ const RoomPage = ({ onRoomSelect }) => {
                     />
                   </Tooltip>
                 </Box>
-              ))
-            ) : (
-              <Text>No rooms available.</Text>
-            )}
-          </VStack>
+                <Divider /> {/* Add Divider as line separator */}
+              </VStack>
+            ))
+          ) : (
+            <Text>No rooms available.</Text>
+          )}
 
-          {/* Repeat for the other containers */}
-          {/* Container 2 */}
-          <VStack borderRight="2px solid gray"  p="4">
-            {container2.length ? (
-              container2.map((room) => (
-                <Box key={room.id} display="flex" justifyContent="space-between" alignItems="center" w="full">
-                  <Button onClick={() => handleRoomSelect(room)}>{room.name}</Button>
-                  <Tooltip label="Delete Room" aria-label="Delete Room Tooltip">
-                    <IconButton
-                      icon={<BiTrash />}
-                      onClick={() => handleDeleteRoom(room)}
-                      aria-label="Delete Room"
-                    />
-                  </Tooltip>
-                </Box>
-              ))
-            ) : (
-              <Text>No rooms available.</Text>
-            )}
-          </VStack>
-
-          {/* Container 3 */}
-          <VStack borderRight="2px solid gray" p="4">
-            {container3.length ? (
-              container3.map((room) => (
-                <Box key={room.id} display="flex" justifyContent="space-between" alignItems="center" w="full">
-                  <Button onClick={() => handleRoomSelect(room)}>{room.name}</Button>
-                  <Tooltip label="Delete Room" aria-label="Delete Room Tooltip">
-                    <IconButton
-                      icon={<BiTrash />}
-                      onClick={() => handleDeleteRoom(room)}
-                      aria-label="Delete Room"
-                    />
-                  </Tooltip>
-                </Box>
-              ))
-            ) : (
-              <Text>No rooms available.</Text>
-            )}
-          </VStack>
-
-          {/* Container 4 */}
-          <VStack borderColor="gray.200"  p="4">
-            {container4.length ? (
-              container4.map((room) => (
-                <Box key={room.id} display="flex" justifyContent="space-between" alignItems="center" w="full">
-                  <Button onClick={() => handleRoomSelect(room)}>{room.name}</Button>
-                  <Tooltip label="Delete Room" aria-label="Delete Room Tooltip">
-                    <IconButton
-                      icon={<BiTrash />}
-                      onClick={() => handleDeleteRoom(room)}
-                      aria-label="Delete Room"
-                    />
-                  </Tooltip>
-                </Box>
-              ))
-            ) : (
-              <Text>No rooms available.</Text>
-            )}
-          </VStack>
-        </Grid>
-
-        {/* Room Addition Form - Appears only when add button is clicked */}
-        {isOpen && (
-          <Stack direction="row" mt="4" p="4" boxShadow="md">
-            <Input
-              placeholder="Room Name"
-              value={newRoom.name}
-              onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
+          {/* Room Addition Form */}
+          {isOpen && (
+            <Stack direction="row" mt="4" p="4" boxShadow="md" w="full" maxW="md">
+              <Input
+                placeholder="Room Name"
+                value={newRoom.name}
+                onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
               />
               <Input
                 placeholder="Room Password"
                 type="password"
                 value={newRoom.password}
-                onChange={(e) =>
-                  setNewRoom({ ...newRoom, password: e.target.value })
-                }
+                onChange={(e) => setNewRoom({ ...newRoom, password: e.target.value })}
               />
               <Button onClick={handleAddRoom}>Add Room</Button>
               <Button onClick={onClose}>Cancel</Button>
             </Stack>
           )}
         </VStack>
-  
-        {/* Password Modal for Room Access */}
-        <Modal isOpen={isPasswordOpen} onClose={onPasswordClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Enter Password for {selectedRoom?.name}</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Input
-                placeholder="Enter room password"
-                type="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-              />
-              {/* Show error message if password is incorrect */}
-              {errorMessage && <Text color="red.500" mt={3}>{errorMessage}</Text>}
-            </ModalBody>
-  
-            <ModalFooter>
-              <Button colorScheme="blue" onClick={handlePasswordSubmit}>
-                Submit
-              </Button>
-              <Button onClick={onPasswordClose} ml={3}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-  
-        {/* Password Modal for Room Deletion */}
-        <Modal isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Verify Password to Delete {selectedRoom?.name}</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Input
-                placeholder="Enter room password"
-                type="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-              />
-              {/* Show error message if password is incorrect */}
-              {errorMessage && <Text color="red.500" mt={3}>{errorMessage}</Text>}
-            </ModalBody>
-  
-            <ModalFooter>
-              <Button colorScheme="red" onClick={handleDeleteSubmit}>
-                Delete Room
-              </Button>
-              <Button onClick={onDeleteModalClose} ml={3}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </>
-    );
-  };
-  
-  export default RoomPage;
+      </Container>
+
+      {/* Password Modal for Room Access */}
+      <Modal isOpen={isPasswordOpen} onClose={onPasswordClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Enter Password for {selectedRoom?.name}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input
+              placeholder="Enter room password"
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+            />
+            {errorMessage && <Text color="red.500" mt={3}>{errorMessage}</Text>}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handlePasswordSubmit}>Submit</Button>
+            <Button onClick={onPasswordClose} ml={3}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Password Modal for Room Deletion */}
+      <Modal isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Verify Password to Delete {selectedRoom?.name}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input
+              placeholder="Enter room password"
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+            />
+            {errorMessage && <Text color="red.500" mt={3}>{errorMessage}</Text>}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" onClick={handleDeleteSubmit}>Delete Room</Button>
+            <Button onClick={onDeleteModalClose} ml={3}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
+
+export default RoomPage;
