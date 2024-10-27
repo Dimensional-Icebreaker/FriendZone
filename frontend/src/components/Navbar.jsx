@@ -29,9 +29,6 @@ const Navbar = ({ room_id, setUsers }) => {
 
 					{/* Right side */}
 					<Flex gap={3} alignItems={"center"}>
-						<Text fontSize={"lg"} fontWeight={500} display={{ base: "none", md: "block" }}>
-							🔥 Current Room ID: {room_id}
-						</Text>
 						
 						<Button onClick={toggleColorMode}>
 							{colorMode === "light" ? <IoMoon /> : <LuSun size={20} />}
