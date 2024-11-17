@@ -1,4 +1,4 @@
-# Friend Deckk 🚀
+# Welcome to Friend Zone 🚀
 
 
 ### Table of Contents
@@ -10,6 +10,7 @@
 -   🎨 Stylish UI Components: Enhanced user experience with stylish UI components provided by Chakra UI.
 -   🌓 Light and Dark Mode: Enjoy a personalized user interface experience with light and dark mode options.
 -   📱 Responsive Design: The app is designed to adapt to various screen sizes, ensuring a consistent experience across devices.
+## To view the live version of this app go to "https://zonedeck.onrender.com"
 
 ### Run the App Locally
 
