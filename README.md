@@ -2,14 +2,14 @@
 
 
 ### Table of Contents
+Key Features:
+-    Tech Stack: Built with Python, Flask, React, SQLAlchemy, and Chakra UI for a modern and robust architecture.
+-    CRUD Functionality: Easily create, read, update, and delete room and friend profiles with real-time updates.
+-    Email Notifications: Keep your information of rooms secured through an integrated email notification system.
+-    Responsive UI: Experience a sleek and responsive design with light/dark mode options for personalized interaction.
+-    Best Practices: Developed using virtual environments (venv) for isolated development and scalable deployments.
 
--   ⚙️ Tech Stack: Python, React, Postgres/Sqllite, SQLAlchemy, Flask, Chakra UI
--   ✅ CRUD Functionality: Seamlessly create, read, update, and delete friends from your store.
--   🔒 Best Practices: Utilizes best practices such as creating virtual environments (venv) for a clean and isolated development environment.
--   🌐 Deployment: Not decided yet
--   🎨 Stylish UI Components: Enhanced user experience with stylish UI components provided by Chakra UI.
--   🌓 Light and Dark Mode: Enjoy a personalized user interface experience with light and dark mode options.
--   📱 Responsive Design: The app is designed to adapt to various screen sizes, ensuring a consistent experience across devices.
+
 ## To view the live version of this app go to "https://zonedeck.onrender.com"
 
 ### Run the App Locally
@@ -17,7 +17,7 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Dimensional-Icebreaker/WebApp.git
+git clone https://github.com/Dimensional-Icebreaker/FriendZone.git
 ```
 
 2. Navigate to the project directory:
