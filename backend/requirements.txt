@@ -49,3 +49,4 @@ uritemplate==4.1.1
 urllib3==2.2.3
 Werkzeug==3.0.3
 psycopg2-binary>=2.9.6
+Flask-Mail==0.9.1
