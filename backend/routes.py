@@ -1,8 +1,14 @@
 from flask import request, jsonify
 from models import db, Room, Friend
 from app import app, db  # Import app and db from app.py
+from flask_mail import Mail, Message
 
-
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'dimensional.icebreaker@gmail.com' 
+app.config['MAIL_PASSWORD'] = 'vfok eqkg svfu krbv' 
+mail = Mail(app)
 
 # Route to create a new room
 @app.route('/api/rooms', methods=['POST'])
@@ -11,14 +17,37 @@ def create_room():
     name = data.get('name')
     acess_password = data.get('access_password')
     admin_password = data.get('admin_password')
+    email = data.get('email')  # Add email field from frontend input
+
 
     if not name or not acess_password or not admin_password:
         return jsonify({'error': 'Room name and password are required'}), 400
+    
     new_room = Room(name=name, access_password=acess_password, admin_password=admin_password)
     db.session.add(new_room)
     db.session.commit()
 
+    #Email continued....
+    try:
+        msg = Message(
+            subject=f"Welcome to the FriendZone App! Make Friends, Have Fun!",
+            sender=app.config['MAIL_USERNAME'],  # The sender's email from Flask-Mail config
+            recipients=[email]
+        )
+        msg.body = (
+            f"Hi,\n\nYour room '{name}' has been successfully created!\n"
+            f"Access Password: {acess_password}\n"
+            f"Admin Password: {admin_password}\n\n"
+            "You can now use this room to collaborate with others.\n\nEnjoy!\n"
+        )
+        mail.send(msg)
+    except Exception as e:
+        return jsonify({'error': 'Room created, but failed to send email', 'details': str(e)}), 500
+    #Email end....
+
     return jsonify(new_room.to_json()), 201
+
+
 @app.route('/api/test', methods=['GET'])
 def test_get():
     return jsonify({'message': 'GET request successful!'}), 200
