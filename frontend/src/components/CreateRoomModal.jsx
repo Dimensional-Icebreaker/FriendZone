@@ -1,4 +1,4 @@
-import {
+import { 
     Button,
     FormControl,
     FormLabel,
@@ -21,14 +21,28 @@ const CreateRoomModal = ({ setRooms }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [roomInputs, setRoomInputs] = useState({
         name: "",
-        access_password: "", // Updated to store access password
-        admin_password: "",  // New state for admin password
+        access_password: "",
+        admin_password: "",
+        email: "", // Added email state
     });
     const toast = useToast();
 
     // Handle room creation
     const handleCreateRoom = async (e) => {
-        e.preventDefault(); // prevent page refresh
+        e.preventDefault(); // Prevent page refresh
+
+        // Validate email before making API call
+        if (!roomInputs.email) {
+            toast({
+                status: "error",
+                title: "Email Required",
+                description: "Please provide a valid email address.",
+                duration: 3000,
+                position: "top-center",
+            });
+            return;
+        }
+
         setIsLoading(true);
         try {
             const res = await fetch("/api/rooms", {
@@ -36,7 +50,7 @@ const CreateRoomModal = ({ setRooms }) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(roomInputs), // Send both passwords along with the room name
+                body: JSON.stringify(roomInputs),
             });
 
             const data = await res.json();
@@ -59,6 +73,7 @@ const CreateRoomModal = ({ setRooms }) => {
                 name: "",
                 access_password: "",
                 admin_password: "",
+                email: "",
             });
         } catch (error) {
             toast({
@@ -86,7 +101,7 @@ const CreateRoomModal = ({ setRooms }) => {
                         <ModalCloseButton />
 
                         <ModalBody pb={6}>
-                            <FormControl>
+                            <FormControl isRequired>
                                 <FormLabel>Room Name</FormLabel>
                                 <Input
                                     placeholder="Enter room name"
@@ -95,25 +110,36 @@ const CreateRoomModal = ({ setRooms }) => {
                                 />
                             </FormControl>
 
-                            <FormControl mt={4}>
+                            <FormControl isRequired mt={4}>
                                 <FormLabel>Access Password</FormLabel>
                                 <Input
                                     placeholder="Enter room access password"
                                     type="password"
-                                    value={roomInputs.access_password}  // Bind to access_password state
+                                    value={roomInputs.access_password}
                                     onChange={(e) => setRoomInputs({ ...roomInputs, access_password: e.target.value })}
                                 />
                             </FormControl>
-
-                            <FormControl mt={4}>
+                            <FormControl isRequired mt={4}>
+                                <FormLabel> Email</FormLabel>
+                                <Input
+                                    placeholder="Enter email"
+                                    type="email"
+                                    value={roomInputs.email}
+                                    onChange={(e) => setRoomInputs({ ...roomInputs, email: e.target.value })}
+                                    required // This makes the email input mandatory
+                                />
+                            </FormControl>
+                            <FormControl isRequired mt={4}>
                                 <FormLabel>Admin Password</FormLabel>
                                 <Input
                                     placeholder="Enter admin password"
                                     type="password"
-                                    value={roomInputs.admin_password}  // Bind to admin_password state
+                                    value={roomInputs.admin_password}
                                     onChange={(e) => setRoomInputs({ ...roomInputs, admin_password: e.target.value })}
                                 />
                             </FormControl>
+
+                            
                         </ModalBody>
 
                         <ModalFooter>
